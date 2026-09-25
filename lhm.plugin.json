@@ -1,0 +1,1480 @@
+{
+  "author": "Momo-Javid",
+  "description": "Local MCP server that gives your AI coding tools a whole team of models. Ask ChatGPT, Claude, Gemini or Perplexity directly, have them debate and cross-verify one another, analyze entire codebases, and run multi-agent crews and iterative workflows — all coordinated by a local Agent Hub.",
+  "homepage": "https://github.com/Momo-Javid/Proxima",
+  "identifier": "momo-javid-proxima",
+  "name": "Proxima",
+  "prompts": [],
+  "resources": [
+    {
+      "name": "status",
+      "uri": "proxima://status"
+    },
+    {
+      "name": "models",
+      "uri": "proxima://models"
+    }
+  ],
+  "tags": [
+    "mcp",
+    "ai",
+    "multi-ai",
+    "chatgpt",
+    "claude",
+    "gemini",
+    "perplexity",
+    "multi-agent",
+    "orchestration",
+    "codebase-analysis",
+    "code-review",
+    "developer-tools"
+  ],
+  "tools": [
+    {
+      "name": "ask_chatgpt",
+      "title": "Ask ChatGPT",
+      "description": "Send a message to ChatGPT specifically. Use ask_model for any other/BYOK provider, smart_query to auto-pick the best provider, or ask_all_ais to query several at once.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to send to ChatGPT"
+          },
+          "files": {
+            "description": "Optional: file paths to include as context. Supports line ranges like \"path/file.js:10-50\". For large files, always specify relevant line ranges only.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "ask_claude",
+      "title": "Ask Claude",
+      "description": "Send a message to Claude specifically (strong at coding/reasoning). Use ask_model for other/BYOK providers, smart_query to auto-pick, or ask_all_ais for several at once.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to send to Claude"
+          },
+          "files": {
+            "description": "Optional: file paths to include as context. Supports line ranges like \"path/file.js:10-50\". For large files, always specify relevant line ranges only.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "ask_gemini",
+      "title": "Ask Gemini",
+      "description": "Send a message to Gemini specifically. Use ask_model for other/BYOK providers, smart_query to auto-pick, or ask_all_ais for several at once.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to send to Gemini"
+          },
+          "files": {
+            "description": "Optional: file paths to include as context. Supports line ranges like \"path/file.js:10-50\". For large files, always specify relevant line ranges only.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "ask_perplexity",
+      "title": "Ask Perplexity",
+      "description": "Send a message to Perplexity specifically (best for web search + citations). Use ask_model for other/BYOK providers, or deep_search for structured research.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to send to Perplexity (best for web search + citations)"
+          },
+          "files": {
+            "description": "Optional: file paths to include as context. Supports line ranges like \"path/file.js:10-50\". For large files, always specify relevant line ranges only.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "ask_model",
+      "title": "Ask Any Model",
+      "description": "Universal chat: send a message to ANY enabled provider by name (the 4 session providers OR any configured BYOK provider). Use this when you need a provider other than the four dedicated ask_* tools.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "Provider name. Currently available: perplexity, chatgpt, claude, gemini"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message to send"
+          },
+          "model": {
+            "description": "Specific model ID override (uses provider default if omitted)",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: file paths to include as context. Supports line ranges like \"path/file.js:10-50\".",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "provider",
+          "message"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "ask_all_ais",
+      "title": "Ask All AIs",
+      "description": "Send the SAME message to multiple providers in parallel and get every answer side by side. Use for breadth/comparison; for a single best answer use smart_query.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to send to multiple AI providers"
+          },
+          "providers": {
+            "description": "Which providers to use (default: all enabled). e.g. [\"chatgpt\", \"nvidia\"]",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "files": {
+            "description": "Optional: file paths to include as context",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "smart_query",
+      "title": "Smart Query (auto-route)",
+      "description": "Best general entry point: auto-routes to the best provider and can verify/cross-check. Modes: auto (fast single AI), verify (primary + cross-model check), consensus (all vote), collaborate (role-based teamwork).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Message to send - auto-routes to best provider"
+          },
+          "preferredProvider": {
+            "description": "Preferred provider (optional - auto-selects if not set)",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: Array of file paths to include as context",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mode": {
+            "description": "Execution mode: auto (default, fast single AI), verify (primary + verifier), consensus (all AIs vote), collaborate (role-based teamwork)",
+            "type": "string",
+            "enum": [
+              "auto",
+              "verify",
+              "consensus",
+              "collaborate"
+            ]
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "new_conversation",
+      "title": "New Conversation (reset)",
+      "description": "Reset conversation memory/context for a provider (or all enabled providers if none named). Use when you want a fresh thread with no prior context.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "description": "Which provider to reset: chatgpt, claude, gemini, or perplexity. If omitted, resets all enabled providers.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "verify_code",
+      "title": "Verify Code",
+      "description": "Quick best-practices check of a code snippet for a stated purpose (bugs, security, improvements). For a whole file/folder use analyze_file; for a deep vulnerability audit use security_audit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "description": "Description of what the code should do"
+          },
+          "code": {
+            "description": "Optional code snippet to verify",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "purpose"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "explain_code",
+      "title": "Explain Code",
+      "description": "Explain a code snippet (or files) in detail, line by line. Use this to understand existing code; use analyze_file for large files/whole codebases.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "The code snippet to explain (or use files parameter)",
+            "type": "string"
+          },
+          "language": {
+            "description": "Programming language",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: Array of file paths containing code to explain",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "generate_code",
+      "title": "Generate Code",
+      "description": "Write new, production-ready code from a description (with comments, error handling, usage examples). For converting existing code use convert_code; for fixing an error use fix_error.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "What the code should do"
+          },
+          "language": {
+            "description": "Programming language (default: JavaScript)",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "description"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "optimize_code",
+      "title": "Optimize Code",
+      "description": "Improve existing code for a goal (speed, memory, readability) and show before/after. For correctness bugs use fix_error; for security use security_audit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Code to optimize (or use files parameter)",
+            "type": "string"
+          },
+          "goal": {
+            "description": "Optimization goal",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: Array of file paths containing code to optimize",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "review_code",
+      "title": "Review Code (snippet)",
+      "description": "Review a code snippet for bugs, security, performance and best practices. For a single file on disk use review_code_file; for a folder use analyze_file.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Code to review (or use files parameter)",
+            "type": "string"
+          },
+          "context": {
+            "description": "Context about the code",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: Array of file paths containing code to review",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "solve",
+      "title": "Solve Coding Task",
+      "description": "End-to-end solve a coding task/feature/bug with full working code. Broadest tool: use generate_code for greenfield code, fix_error for a specific error message.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "What to solve — coding task, bug, feature, anything"
+          },
+          "files": {
+            "description": "Optional: file paths for context",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "language": {
+            "description": "Programming language if relevant",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "fix_error",
+      "title": "Fix Error",
+      "description": "Diagnose a specific error message/stack trace and give the exact fix (root cause → fix → prevention → full code). For a general explanation only, use explain_error.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message or stack trace"
+          },
+          "file": {
+            "description": "File path where the error occurs",
+            "type": "string"
+          },
+          "context": {
+            "description": "Additional context about what you were doing",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "build_architecture",
+      "title": "Build Architecture",
+      "description": "Design a complete, production-ready system architecture (stack, schema, APIs, deployment) from a project description.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "What you want to build"
+          },
+          "constraints": {
+            "description": "Tech constraints (e.g., \"must use Next.js, PostgreSQL\")",
+            "type": "string"
+          },
+          "scale": {
+            "description": "Expected scale (e.g., \"10k users\", \"enterprise\")",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "description"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "write_tests",
+      "title": "Write Tests",
+      "description": "Generate a complete test file for the code in a given file path (happy path + edge cases + error scenarios).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "File path to generate tests for"
+          },
+          "framework": {
+            "description": "Test framework (jest, vitest, mocha, pytest). Default: auto-detect",
+            "type": "string"
+          },
+          "focus": {
+            "description": "Focus area: unit, integration, edge-cases, all",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "explain_error",
+      "title": "Explain Error",
+      "description": "Explain an error in plain language with likely causes and step-by-step fixes. For the exact code fix instead, use fix_error.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message or stack trace to explain"
+          },
+          "context": {
+            "description": "What you were doing when the error occurred",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "convert_code",
+      "title": "Convert Code",
+      "description": "Translate existing code from one language/framework to another, preserving all functionality. For writing new code from scratch use generate_code.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "description": "File path to convert",
+            "type": "string"
+          },
+          "code": {
+            "description": "Code snippet to convert (if no file)",
+            "type": "string"
+          },
+          "from": {
+            "description": "Source language/framework (auto-detected if not specified)",
+            "type": "string"
+          },
+          "to": {
+            "type": "string",
+            "description": "Target language/framework (e.g., \"TypeScript\", \"Python/FastAPI\", \"Vue 3\")"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "to"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "security_audit",
+      "title": "Security Audit",
+      "description": "Deep security audit of code (injection, auth, secrets, crypto, config, deps) with severity, location and fixes. For general code review use review_code.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "Code to audit for security vulnerabilities",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: file paths to audit",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "language": {
+            "description": "Programming language",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding.",
+            "type": "string"
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "deep_search",
+      "title": "Deep Search (AI research)",
+      "description": "AI-powered research with typed prompts (web, reddit, github, news, math, academic, factcheck, stats). Best for sourced research; for a raw page fetch use web_scrape, for raw links use ddg_search.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query or research question"
+          },
+          "type": {
+            "description": "Search type (default: web). reddit, github, news, math, academic, factcheck, stats",
+            "type": "string",
+            "enum": [
+              "web",
+              "reddit",
+              "github",
+              "news",
+              "math",
+              "academic",
+              "factcheck",
+              "stats"
+            ]
+          },
+          "language": {
+            "description": "For github: programming language filter (e.g., JavaScript, Python)",
+            "type": "string"
+          },
+          "timeframe": {
+            "description": "For news: timeframe like \"today\", \"this week\", \"2024\"",
+            "type": "string"
+          },
+          "year": {
+            "description": "For stats: specific year",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: file paths for context. Supports line ranges like \"path/file.js:10-50\"",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_ui_reference",
+      "title": "UI/UX Design Reference",
+      "description": "Get a premium UI/UX design reference (colors, typography, layout, components, a11y), optionally improving existing code. For general code generation use generate_code.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Describe the UI/UX you need — what kind of page, component, layout, or design style you want"
+          },
+          "code": {
+            "description": "Optional: existing code to analyze and apply design improvements on",
+            "type": "string"
+          },
+          "files": {
+            "description": "Optional: file paths of existing code to improve with better UI/UX. Supports line ranges like \"path/file.js:10-50\"",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "style": {
+            "description": "Design style preference: modern, minimal, glassmorphism, dark, corporate, playful, etc.",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select best for coding",
+            "type": "string"
+          }
+        },
+        "required": [
+          "description"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "web_scrape",
+      "title": "Web Scrape (URL → Markdown)",
+      "description": "Fetch a single URL and convert the page to clean Markdown (SSRF-guarded). Use for a known page; use ddg_search to find URLs, or deep_search for AI research.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to scrape and convert to markdown"
+          },
+          "timeout": {
+            "description": "Timeout in ms (default 15000)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "ddg_search",
+      "title": "DuckDuckGo Search (free links)",
+      "description": "Free web search via DuckDuckGo returning ranked title/URL/snippet results (no API key). Use to find pages; use web_scrape to read one, or deep_search for AI-synthesized research.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "maxResults": {
+            "description": "Max results (default 8)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "content",
+      "title": "Content (write / summarize / analyze)",
+      "description": "General text/content tool: summarize, write, brainstorm, howto, analyze, extract, or improve. For code use the code tools; for research with sources use deep_search.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "summarize",
+              "write",
+              "brainstorm",
+              "howto",
+              "analyze",
+              "extract",
+              "improve"
+            ],
+            "description": "Action: summarize (URL/text), write (article), brainstorm (ideas), howto (step-by-step guide), analyze (document/URL), extract (data from text), improve (writing help)"
+          },
+          "input": {
+            "type": "string",
+            "description": "Main input — URL, topic, text, or task description"
+          },
+          "detail": {
+            "description": "Extra context — focus area, writing style, data type to extract, specific question",
+            "type": "string"
+          },
+          "body": {
+            "description": "Content body — text to improve, or content to analyze/extract from",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "input"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "compare",
+      "title": "Compare Two Things",
+      "description": "Compare two items/options/technologies side by side, optionally for a given context.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "item1": {
+            "type": "string",
+            "description": "First item to compare"
+          },
+          "item2": {
+            "type": "string",
+            "description": "Second item to compare"
+          },
+          "context": {
+            "description": "Context for comparison",
+            "type": "string"
+          },
+          "provider": {
+            "description": "AI provider: chatgpt, claude, gemini, perplexity, or any configured BYOK provider. Default: auto-select",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item1",
+          "item2"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "debate",
+      "title": "Multi-AI Debate",
+      "description": "Have multiple providers argue DIFFERENT stances on a topic (one stance each), then conclude. Needs 2+ enabled providers for true multi-AI; otherwise one AI covers all sides.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "Topic or question to debate"
+          },
+          "sides": {
+            "description": "Number of perspectives to gather (default: 2)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "topic"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "verify",
+      "title": "Verify Claim (cross-AI)",
+      "description": "Ask one or more providers to answer a question/claim with a confidence rating and caveats. Use to fact-check or cross-check an answer across providers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "Question or claim to verify"
+          },
+          "providers": {
+            "description": "Optional: specific providers to use for verification",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "clear_cache",
+      "title": "Clear Response Cache",
+      "description": "Clear the in-memory provider response cache so the next identical question is re-asked fresh instead of returning a cached answer.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "analyze_file",
+      "title": "Analyze File / Codebase",
+      "description": "Analyze a file OR a whole directory (auto codebase-packing, smart-slicing, symbol extraction, grep, secret scan). Best for large files/folders; for a quick snippet use explain_code/review_code.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "description": "Absolute path to the file or directory to analyze"
+          },
+          "question": {
+            "description": "Specific question about the file/codebase",
+            "type": "string"
+          },
+          "provider": {
+            "description": "Which AI to use (chatgpt, claude, gemini, perplexity, or any configured BYOK provider). Default: claude",
+            "type": "string"
+          },
+          "grep": {
+            "description": "Optional regex pattern to search within the file/codebase before analysis",
+            "type": "string"
+          },
+          "symbols": {
+            "description": "Comma-separated function/class names to extract from file. E.g. \"smartChat,toolResponse,guardrails\". Auto-resolves dependencies.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "filePath"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "review_code_file",
+      "title": "Review Code File",
+      "description": "Review a single code file on disk for issues and improvements (optionally focused on bugs/performance/security/style). For a whole folder use analyze_file; for a pasted snippet use review_code.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "filePath": {
+            "type": "string",
+            "description": "Absolute path to the code file to review"
+          },
+          "focus": {
+            "description": "What to focus on (bugs, performance, security, style)",
+            "type": "string"
+          },
+          "provider": {
+            "description": "Which AI to use (chatgpt, claude, gemini, perplexity, or any configured BYOK provider). Default: claude",
+            "type": "string"
+          }
+        },
+        "required": [
+          "filePath"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "show_window",
+      "title": "Show Agent Hub Window",
+      "description": "Make the Proxima Agent Hub window visible (no effect on chat).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "hide_window",
+      "title": "Hide Agent Hub Window",
+      "description": "Hide the Proxima Agent Hub window (keeps running in the background; MCP still works).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "toggle_window",
+      "title": "Toggle Agent Hub Window",
+      "description": "Toggle the Proxima Agent Hub window between visible and hidden.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "set_headless_mode",
+      "title": "Set Headless Mode",
+      "description": "Enable/disable headless mode (Agent Hub runs in the background without a visible window; MCP keeps working).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Enable (true) or disable (false) headless mode"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "run_workflow",
+      "title": "Run Workflow (sequential)",
+      "description": "Run an ordered multi-step pipeline where each step's output feeds the next, auto-routing each step to a provider. Use for fixed sequential pipelines; use run_loop to iterate one task to convergence, crew for role-based agents.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task": {
+                  "type": "string",
+                  "description": "What this step should do"
+                },
+                "provider": {
+                  "description": "Which AI to use (auto-routed if empty)",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "task"
+              ]
+            },
+            "description": "Array of workflow steps. Each step output feeds into next step."
+          },
+          "name": {
+            "description": "Workflow name",
+            "type": "string"
+          },
+          "input": {
+            "description": "Initial context/input for first step",
+            "type": "string"
+          }
+        },
+        "required": [
+          "steps"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "run_loop",
+      "title": "Run Loop (iterate to quality)",
+      "description": "Iterate ONE task: generate → another AI reviews → improve, until it converges or hits maxTurns. Use to refine a single output; use run_workflow for distinct sequential steps.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "The task to iterate on"
+          },
+          "provider": {
+            "description": "Primary AI provider (auto-routed if empty)",
+            "type": "string"
+          },
+          "reviewProvider": {
+            "description": "AI to review output (defaults to claude)",
+            "type": "string"
+          },
+          "maxTurns": {
+            "description": "Max iterations (default 3)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "crew",
+      "title": "Multi-Agent Crew",
+      "description": "Run a role-based pipeline (default Researcher→Writer→Reviewer), each role on its own provider, passing output down the chain. Use for role-specialized teamwork; use run_workflow for plain sequential tasks.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Task for the multi-agent crew to execute"
+          },
+          "agents": {
+            "description": "Custom agent pipeline. Default: Researcher→Writer→Reviewer",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "description": "Agent role (e.g. Researcher, Writer, Reviewer)"
+                },
+                "provider": {
+                  "description": "AI provider for this agent",
+                  "type": "string"
+                },
+                "instruction": {
+                  "description": "Specific instruction for this agent",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "role"
+              ]
+            }
+          }
+        },
+        "required": [
+          "task"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "proxima_cost_report",
+      "title": "Proxima Cost Report",
+      "description": "Show this session's token usage and estimated money saved (per provider). Read-only observability.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "proxima_agentic_status",
+      "title": "Proxima Agentic Status",
+      "description": "Full status of the agentic pipeline: current mode (session/BYOK), router/provider health, memory, run-loop, orchestrator and cost. Read-only diagnostics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    }
+  ],
+  "version": "5.0.0"
+}
